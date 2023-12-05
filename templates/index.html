@@ -1,0 +1,60 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geocaching App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Geocaching App</h1>
+
+    <h2>Geocaches</h2>
+    <ul id="geocache-list">
+        {% for geocache in geocaches %}
+        <li>{{ geocache.name }} ({{ geocache.latitude }}, {{ geocache.longitude }})</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Add a Geocache</h2>
+    <form id="add-geocache-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="latitude">Latitude:</label>
+        <input type="text" id="latitude" name="latitude" required><br>
+
+        <label for="longitude">Longitude:</label>
+        <input type="text" id="longitude" name="longitude" required><br>
+
+        <button type="submit">Add Geocache</button>
+    </form>
+
+    <script>
+        $(document).ready(function () {
+            $("#add-geocache-form").submit(function (event) {
+                event.preventDefault();
+
+                const name = $("#name").val();
+                const latitude = parseFloat($("#latitude").val());
+                const longitude = parseFloat($("#longitude").val());
+
+                $.ajax({
+                    type: "POST",
+                    url: "/add_geocache",
+                    contentType: "application/json",
+                    data: JSON.stringify({ name, latitude, longitude }),
+                    success: function (response) {
+                        alert(response.message);
+                        window.location.reload();
+                    },
+                    error: function (error) {
+                        alert("Error adding geocache: " + error.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
